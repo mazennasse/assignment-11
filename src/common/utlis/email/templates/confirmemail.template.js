@@ -561,6 +561,29 @@ export const htmlTemplates = {
 </html>
     `;
   },
+  [EmailSubject.FORGOT_PASSWORD]: ({
+  title = "Forgot Password",
+  code,
+}) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>${title}</title>
+      </head>
+      <body>
+        <h1>${title}</h1>
+        <p>Use the code below to reset your password:</p>
+        <h2>${code}</h2>
+        <p>
+          If you did not request a password reset,
+          please ignore this email.
+        </p>
+      </body>
+    </html>
+  `;
+},
 
 };
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { confirmEmail, login, resendConfirmEmail, signup,signupWithGmail,confirmLoginTwoStepVerification } from "./authentication.service.js";
+import { confirmEmail, login, resendConfirmEmail, signup,signupWithGmail,confirmLoginTwoStepVerification, forgotPassword,  ResetPassword } from "./authentication.service.js";
 import { sucessresponse } from "../../common/utlis/success.response.js";
 
 import * as validators from "./authentication.validation.js"
@@ -47,6 +47,17 @@ router.post(
     return sucessresponse({ res, data });
   }
 );
+
+router.post("/forgot-password",validation(validators.forgotPassword),async(req,res,next)=>{
+    const data=await forgotPassword(req.validate.body)
+    return sucessresponse({res,data})
+})
+
+
+router.post("/reset-password",validation(validators.resetPassword),async(req,res,next)=>{
+    const data=await ResetPassword(req.validate.body)
+    return sucessresponse({res,data})
+})
 
 
 

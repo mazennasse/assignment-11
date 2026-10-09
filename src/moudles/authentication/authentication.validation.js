@@ -88,3 +88,33 @@ export const confirmLoginTwoStepVerification = (lang) => {
     }),
   });
 };
+
+
+export const forgotPassword = (lang) => {
+  return z.object({
+    body: z.strictObject({
+      email: generalValidation.email(lang)
+      
+    }),
+  });
+};
+
+
+export const resetPassword = (lang) => {
+  return z.object({
+    body: z.strictObject({
+      email: generalValidation.email(lang),
+      otp: generalValidation.otp(lang),
+      newPassword: generalValidation.password(lang),
+      confirmPassword: generalValidation.password(lang),
+    }).superRefine((data, ctx) => {
+      generalValidation.matchFields({
+        orginal: "newPassword",
+        copy: "confirmPassword",
+        data,
+        ctx,
+        lang,
+      });
+    }),
+  });
+};

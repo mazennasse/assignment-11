@@ -327,3 +327,43 @@ export const signupWithGmail = async ({idToken},issuer) => {
 
 
 
+export const forgotPassword=async({email})=>{
+  const account = await findOne({
+    model: UserModel,
+    filter: { email , provider: ProviderEnum.SYSTEM,confirmEmail:{$exists:true}},
+    options: {
+      select: "email",
+    },
+  });
+
+  if(!account){
+    throw notFoundException("this email is not found"); 
+  }
+  await sendEmailotp({email,subject:EmailSubject.FORGOT_PASSWORD})
+  return  `If the account exists, an OTP will be sent to the email.`
+
+
+}
+
+export const ResetPassword=async({email,otp,newPassword})=>{
+  const account = await findOne({
+    model: UserModel,
+    filter: { email , provider: ProviderEnum.SYSTEM,},
+    options: {
+      select: "email",
+    },
+  });
+
+  if(!account){
+    throw notFoundException("this email is not found"); 
+  }
+   const hashOTP= await get({key:userOtpKey({email,subject:EmailSubject.FORGOT_PASSWORD})})
+  if(!hashOTP || !await compare(otp,hashOTP)){
+    throw BadExecption("invalid otp")
+  }
+  account.password=await hash(newPassword)
+  await account.save()
+  await del({key:userOtpKey({email,subject:EmailSubject.FORGOT_PASSWORD})})
+  return `reset password done`
+
+}
